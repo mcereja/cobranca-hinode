@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="LayoutPadrao">
+	  
+	<head>
+		<title>Pesquisa de Títulos</title>
+	</head>
+	
+<section layout:fragment="conteudo">
+
+	<div th:include="~{MensagemGeral}"></div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="clearfix">
+	   			<h1 class="panel-title aw-titulo-panel">Pesquisa de títulos</h1>
+	   			<a class="btn btn-link aw-link-panel" th:href="@{/titulos/novo}">Novo título</a>
+	   		</div>
+	   	</div>
+	   	
+	   	<div class="panel-body">
+	   	
+	   		<form class="form-horizontal" action="" method="GET" th:object="${filtro}">
+	   			<div class="form-group">
+	   				<div class="col-sm-12">
+		   				<div class="col-sm-5">
+	   						<input type="text" class="form-control" th:field="*{descricao}"
+	   								autofocus="autofocus" 
+	   								placeholder="Digite a descrição"/>	   						
+		   				</div>
+		   				
+		   				<div class="col-sm-2">
+	   						<select class="form-control" name="formaPagamento" 
+	   								th:field="*{formaPagamento}"
+	   								title="Escolha a Forma de Pagamento">
+	   							<option th:text="Todas_Formas" th:value="TODAS"></option>
+								
+								<option th:each="formaPagto : ${todasFormasPagamento}" th:value="${formaPagto}" 
+										th:text="${formaPagto.descricao}">
+								</option>
+                    		</select>
+		   				</div>
+		   				
+		   				<div class="text-left  col-sm-1">
+	   						<select class="form-control" name="statusPesquisa" 
+	   								th:field="*{status}"
+	   								title="Escolha o Status do título">
+	   							<option th:text="Todos" th:value="TODOS"></option>
+								
+								<option th:each="statusPesquisa : ${todosStatusTitulo}" th:value="${statusPesquisa}" 
+										th:text="${statusPesquisa.descricao}">
+								</option>
+                    		</select>
+		   				</div>
+		   				
+		   				<div class="col-sm-1">
+	   						<select class="form-control" name="periodoVencimento" 
+	   								th:field="*{mes}"
+	   								title="Escolha o mês desejado">
+								<option th:each="mesanos : ${todosMesesAnosVencimentoTitulos}" th:value="${mesanos.mes}" 
+										th:text="${mesanos.mes}">
+								</option>
+                    		</select>
+		   				</div>
+		   				
+		   				<div class="col-sm-1">
+	   						<select class="form-control" name="periodoVencimento" 
+	   								th:field="*{ano}"
+	   								title="Escolha o ano desejado">
+								<option th:each="mesanos : ${todosMesesAnosVencimentoTitulos}" th:value="${mesanos.ano}" 
+										th:text="${mesanos.ano}">
+								</option>
+                    		</select>
+		   				</div>
+		   				
+		   				<div class="col-sm-1">					
+	   						<button type="submit" class="btn btn-default">
+	   							<i class="glyphicon glyphicon-search"></i>
+   							</button>				
+		   				</div>
+	   				</div>
+	   			</div>
+	   			
+	   		</form>
+	   		
+		   	<div class="table-responsive">
+		   		<table class="table table-bordered table-striped">
+		   			<thead>
+		   				<tr>
+		   					<th>Decrição</th>
+		   					<th class="text-center col-sm-1">Vencimento</th>
+		   					<th class="text-right col-sm-1">Valor Bruto</th>
+		   					<th class="text-right col-sm-1">Valor Liquido</th>
+		   					<th class="text-center col-sm-2">Forma Pagto</th>
+		   					<th class="text-center col-sm-1">Status</th>
+		   					<th class="col-md-1"></th>
+		   				</tr>
+		   			</thead>
+		   			<tbody>
+		   				<tr th:each="titulo : ${todosTitulos}">
+		   					<td th:text="${titulo.descricao}"></td>
+		   					
+		   					<td class="text-center" th:text="${{titulo.dataVencimento}}"></td>
+		   					
+		   					<td class="text-right" th:text="|R$ ${{titulo.valor}}|"></td>
+		   					
+		   					<td class="text-right" th:text="|R$ ${{titulo.valorLiquido}}|"
+		   						th:title="${titulo.formaPagamento.descricao}"></td>
+		   					
+		   					<td class="text-center" th:text="${titulo.formaPagamento.descricao}"></td>
+		   					
+		   					<td class="text-center" th:attr="data-role=${titulo.codigo}">
+		   						<span class="label" th:text="${titulo.status.descricao}"
+		   							th:classappend="${titulo.pendente ? 'label-warning' : 'label-success'}"></span>
+		   					</td>
+		   					<td class="text-center">
+		   						<a class="btn btn-link btn-xs" th:href="@{/titulos/{codigo}(codigo=${titulo.codigo})}"
+		   								title="Editar" rel="tooltip" data-placement="top">
+		   							<span class="glyphicon glyphicon-pencil"></span>
+								</a>
+								<a class="btn btn-link btn-xs" data-toggle="modal" data-target="#confirmacaoExclusaoModal"
+		   								th:attr="data-codigo=${titulo.codigo}, data-descricao=${titulo.descricao}"
+		   								title="Excluir" rel="tooltip" data-placement="top">
+		   							<span class="glyphicon glyphicon-remove"></span>
+								</a>
+								<a class="btn btn-link btn-xs js-atualizar-status" th:if="${titulo.pendente}"
+		   								th:attr="data-codigo=${titulo.codigo}, data-descricao=${titulo.descricao}"
+		   								title="Receber" rel="tooltip" data-placement="top"
+		   								th:href="@{/titulos/{codigo}/receber (codigo=${titulo.codigo}) }">
+		   							<span class="glyphicon glyphicon-check"></span>
+								</a>
+		   					</td>
+		   				</tr>
+		   				<tr>
+		   					<td colspan="6" th:if="${#lists.isEmpty(todosTitulos)}">Nenhum título foi encontrado...</td>
+		   				</tr>
+		   				
+					</tbody>
+		   		</table>
+		   		
+		   		<div class="">
+		   			<h3 class="text-right">Valor Liquido Total: 
+		   				<span th:text="${totalValorLiquido}">...</span>
+		   			</h3>
+		   		</div>
+		   	</div>
+	   	</div>
+
+		<div th:include="~{DialogoConfirmacaoExclusao}"></div>	   	
+	   	
+	</div>
+</section>
+
+</html>
