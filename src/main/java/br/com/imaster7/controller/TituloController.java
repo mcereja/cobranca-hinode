@@ -85,7 +85,7 @@ public class TituloController {
 		cadastroTituloService.excluir(codigo);
 		
 		atributos.addFlashAttribute("mensagem", "Título excluído com sucesso !!!");
-		return "redirect:/titulos/pesquisar";
+		return "redirect:/titulos";
 	}
 	
 	@RequestMapping(value="/{codigo}/receber", method=RequestMethod.PUT)

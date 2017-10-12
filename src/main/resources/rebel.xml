@@ -13,6 +13,11 @@
 
 	<web>
 		<link target="/">
+			<dir name="D:/MCereja/AUtilPessoal/DICIPULO_JAVA/Eclipse/wspaceneon/cobranca-hinode/target/m2e-wtp/web-resources">
+				<exclude name="/"/>
+			</dir>
+		</link>
+		<link target="/">
 			<dir name="D:/MCereja/AUtilPessoal/DICIPULO_JAVA/Eclipse/wspaceneon/cobranca-hinode/src/main/webapp">
 			</dir>
 		</link>
